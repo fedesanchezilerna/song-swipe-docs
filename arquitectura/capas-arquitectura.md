@@ -34,7 +34,7 @@ Configuración de temas y recursos visuales.
 
 ---
 
-## 📋 Responsabilidades por Capa
+## Responsabilidades por Capa
 
 ### **Core Layer (core/)**
 **Propósito**: Proveer infraestructura transversal y configuraciones globales.

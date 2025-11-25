@@ -1,5 +1,7 @@
 # Autenticación
 
+TODO: Documentar el flujo de autenticación con Supabase y OAuth de Spotify.
+
 Este documento describe cómo se maneja la autenticación, utilizando Supabase con OAuth de Spotify.
 
 ## Setup Inicial
@@ -13,8 +15,8 @@ Este documento describe cómo se maneja la autenticación, utilizando Supabase c
 
 
 **Puntos clave del flujo:**
-- ✅ Supabase maneja todo el flujo OAuth internamente
-- ✅ Tokens se almacenan de forma segura automáticamente
-- ✅ El `provider_token` (token de Spotify) está disponible para llamadas a Spotify API
-- ✅ Room se usa solo para caché del perfil del usuario
-- ✅ No se implementa refresh de tokens manualmente
+- Supabase maneja todo el flujo OAuth internamente
+- Tokens se almacenan de forma segura automáticamente
+- El `provider_token` (token de Spotify) está disponible para llamadas a Spotify API
+- Room se usa solo para caché del perfil del usuario
+- No se implementa refresh de tokens manualmente
