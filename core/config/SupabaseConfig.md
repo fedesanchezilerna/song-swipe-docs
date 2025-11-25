@@ -1,6 +1,5 @@
 # SupabaseConfig
 
-## Propósito
 Centraliza la configuración específica de Supabase, inicializa el cliente y expone credenciales necesarias para autenticación y acceso a la base de datos.
 
 ## Responsabilidades

@@ -4,7 +4,7 @@
 
 Se ejecuta **después** de cada respuesta HTTP, permitiendo interceptar y procesar errores de forma consistente antes de que lleguen a los repositorios.
 
-
+### Ventajas de usar ErrorInterceptor
 - **Manejo centralizado de errores HTTP**: 400, 401, 403, 404, 500, etc.
 - **Logging automático**: Registra todos los errores para debugging
 - **Transformación de errores**: Convierte respuestas de error en excepciones tipadas

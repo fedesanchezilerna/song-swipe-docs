@@ -4,8 +4,7 @@
 
 Este interceptor se ejecuta **antes** de cada request, añadiendo el header `Authorization: Bearer <token>` necesario para autenticarse con Spotify Web API.
 
-## ¿Por qué usar un Interceptor?
-
+### Ventajas de usar un Interceptor
 - **Centraliza la autenticación**: No tienes que añadir el token manualmente en cada llamada
 - **Código más limpio**: Las interfaces de Retrofit no necesitan `@Header("Authorization")`
 - **Supabase maneja el refresh automático**: El interceptor siempre obtiene el token actualizado

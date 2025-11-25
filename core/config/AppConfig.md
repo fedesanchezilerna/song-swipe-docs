@@ -1,6 +1,5 @@
 # AppConfig
 
-## Propósito
 Concentra la configuración general de la aplicación en un único punto, facilitando cambios entre entornos (desarrollo, producción) y evitando hardcodear valores en múltiples lugares.
 
 ## Responsabilidades
