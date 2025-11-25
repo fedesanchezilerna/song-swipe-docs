@@ -28,14 +28,14 @@ song-swipe-frontend/
     │   │       ├── SpotifyAuthInterceptor.kt           # Inyecta token de Spotify en requests
     │   │       └── ErrorInterceptor.kt                 # Manejo centralizado de errores HTTP
     │   └── utils/                                      # Utilidades y funciones helper
-    │       ├── Constants.kt                            # Constantes globales (URLs, keys, etc.)
-    │       └── Extensions.kt                           # Extensiones de Kotlin para tipos comunes\
+    │       └── Extensions.kt                           # Extensiones de Kotlin para tipos comunes
     │
     ├── data/                                           # Gestión de fuentes de datos y repositorios
     │   ├── datasource/                                 # Fuentes de datos locales y remotas
     │   │   ├── local/                                  # Acceso a datos locales
     │   │   │   ├── dao/                                # Data Access Objects de Room
     │   │   │   ├── database/                           # Configuración de Room Database
+    │   │   │   │   └── DatabaseConstants.kt            # Nombres de tablas y columnas
     │   │   │   └── preferences/                        # SharedPreferences y DataStore
     │   │   └── remote/                                 # Acceso a APIs remotas
     │   │       ├── api/                                # Interfaces de Retrofit
@@ -67,6 +67,7 @@ song-swipe-frontend/
     │
     ├── domain/                                         # Lógica de negocio pura (independiente de frameworks)
     │   ├── model/                                      # Entidades, Value Objects, estados, enums
+    │   │   └── DomainConstants.kt                      # Constantes de lógica de negocio y validación
     │   ├── repository/                                 # Interfaces de repositorio (contratos)
     │   └── usecase/                                    # Casos de uso con lógica de negocio
     │       ├── auth/                                   # Casos de uso de autenticación
@@ -87,7 +88,9 @@ song-swipe-frontend/
     │   │   ├── profile/                                # Pantalla de perfil de usuario
     │   │   └── main/                                   # Pantalla principal y navegación
     │   │       └── MainScreen.kt                       # Scaffold principal con bottom nav
-    │   └── viewmodels/                                 # ViewModels que gestionan estado de UI
+    │   ├── viewmodels/                                 # ViewModels que gestionan estado de UI
+    │   └── utils/                                      # Utilidades específicas de UI
+    │       └── UIConstants.kt                          # Constantes de UI (animaciones, límites, dimensiones)
     │
     ├── ui/                                             # Configuración de tema visual
     │   └── theme/                                      # Temas de Material Design

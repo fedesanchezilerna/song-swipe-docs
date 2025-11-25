@@ -93,7 +93,6 @@ fun Modifier.paddingHorizontal(padding: Dp): Modifier {
 fun Modifier.paddingVertical(padding: Dp): Modifier {
     return this.padding(vertical = padding)
 }
-```
 
 // En LoginViewModel
 fun validateEmail(email: String): Boolean {
@@ -103,12 +102,12 @@ fun validateEmail(email: String): Boolean {
 // En SwipeCard (Compose)
 Text(
     text = song.title.capitalizeWords(),  // ← Extension de String
-    style = MaterialTheme.typography.h6
+    style = MaterialTheme.typography...
 )
 
 Text(
     text = song.durationMs.toTimeFormat(),  // ← Extension de Int
-    style = MaterialTheme.typography.caption
+    style = MaterialTheme.typography...
 )
 
 // En LoginScreen
