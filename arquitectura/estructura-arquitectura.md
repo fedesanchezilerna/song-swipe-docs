@@ -80,6 +80,11 @@ song-swipe-frontend/
     │       └── user/                                   # Casos de uso de perfil de usuario
     │
     ├── presentation/                                   # Interfaz de usuario y estado de UI
+    │   ├── theme/                                      # Temas de Material Design
+    │   │   ├── Color.kt                                # Paleta de colores de la app
+    │   │   ├── Theme.kt                                # Configuración de tema Material 3
+    │   │   ├── Type.kt                                 # Tipografía de la app
+    │   │   └── Dimensions.kt                           # Formas y bordes
     │   ├── components/                                 # Componentes reutilizables de Jetpack Compose
     │   ├── screens/                                    # Pantallas completas de la app
     │   │   ├── auth/                                   # Pantallas de autenticación (login, registro)
@@ -91,9 +96,6 @@ song-swipe-frontend/
     │   ├── viewmodels/                                 # ViewModels que gestionan estado de UI
     │   └── utils/                                      # Utilidades específicas de UI
     │       └── UIConstants.kt                          # Constantes de UI (animaciones, límites, dimensiones)
-    │
-    ├── ui/                                             # Configuración de tema visual
-    │   └── theme/                                      # Temas de Material Design
     │
     ├── di/                                             # Inyección de dependencias con Hilt
     │   ├── AppModule.kt                                # Provee dependencias generales de la app
