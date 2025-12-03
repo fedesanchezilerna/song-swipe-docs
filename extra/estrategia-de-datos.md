@@ -1,28 +1,53 @@
-# 🗄️ Estrategia de Datos: Híbrida (Local-First con Sync)
+# Estrategia de Datos MVP: Online-First (Simplificado)
 
-## **Prioridad 1: Room (Local, Offline-First)** 💾
+## **MVP: Solo Supabase Auth + Spotify API**
 ```kotlin
-// Datos críticos guardados localmente
-Room Database:
-├── UserEntity (perfil, preferencias)
-├── SongEntity (canciones vistas, caché)
-├── SwipeEntity (likes/dislikes del usuario)
-└── PlaylistEntity (playlists creadas)
+// Datos de usuario desde Supabase Auth
+supabase.auth.currentUserOrNull()?.userMetadata:
+├── id (Supabase user ID)
+├── email
+├── display_name (de Spotify)
+├── avatar_url (de Spotify)
+└── provider_id (Spotify ID)
+
+// Datos de música desde Spotify API (vía Retrofit)
+Spotify API:
+├── Playlists del usuario
+├── Canciones y tracks
+├── Información de artistas
+└── Top tracks del usuario
 ```
 
-## **Prioridad 2: Supabase (Backup en Cloud)** ☁️
-```kotlin
-// Sincronización periódica para:
-Supabase PostgreSQL:
-├── users (backup de perfil)
-├── swipes (historial persistente)
-└── playlists (backup de playlists)
+## **Decisiones de Arquitectura MVP:**
+
+✅ **Implementado:**
+- Supabase Auth para autenticación y sesión
+- Retrofit para consumir Spotify API
+- Provider token de Supabase para autorizar llamadas a Spotify
+- Datos de usuario desde `auth.users` (tabla interna de Supabase)
+
+❌ **NO en MVP:**
+- Room database (no hay persistencia local)
+- Tabla `public.users` en Supabase (solo `auth.users`)
+- Modo offline (requiere conexión siempre)
+- Sincronización de datos entre local y remoto
+
+## **Flujo de Datos Simplificado:**
+```
+1. Usuario autenticado → Session en Supabase
+2. Obtener provider_token → Token de Spotify
+3. Llamar Spotify API con Retrofit → Datos en tiempo real
+4. No hay caché local → Siempre datos frescos
+5. Sin conexión → App no funciona
 ```
 
-## **Flujo de Sincronización:**
-```
-1. Usuario hace swipe → Guardar en Room (instantáneo)
-2. Background WorkManager → Sync con Supabase cada 15 min
-3. App abre → Verificar si hay datos nuevos en Supabase
-4. Si hay conexión → Sincronizar; Si no → Usar Room
-```
+## **Ventajas MVP:**
+- ✅ Desarrollo más rápido
+- ✅ Menos complejidad
+- ✅ Datos siempre actualizados
+- ✅ Sin problemas de sincronización
+
+## **Limitaciones MVP:**
+- ❌ Requiere conexión constante
+- ❌ Sin caché (más lento en redes lentas)
+- ❌ Sin datos cuando offline

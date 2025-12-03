@@ -22,41 +22,39 @@ implementation("com.google.dagger:hilt-android:2.48")
 kapt("com.google.dagger:hilt-compiler:2.48")
 ```
 
-### **Persistencia Local (Room)**
-```kotlin
-// Room - Base de datos SQLite local
-implementation("androidx.room:room-runtime:2.6.1")
-implementation("androidx.room:room-ktx:2.6.1")
-kapt("androidx.room:room-compiler:2.6.1")
-
-// DataStore - Preferencias modernas
-implementation("androidx.datastore:datastore-preferences:1.0.0")
-```
-
 ### **Networking**
 ```kotlin
-// Retrofit - Cliente HTTP para APIs
+// Retrofit - Cliente HTTP para Spotify API
 implementation("com.squareup.retrofit2:retrofit:2.9.0")
 implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 implementation("com.squareup.okhttp3:okhttp:4.12.0")
 implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+```
 
-// Spotify SDK - Autenticación
-implementation("com.spotify.android:auth:1.2.5")
+### **Persistencia (Futuro - No en MVP)**
+```kotlin
+// Room - Base de datos SQLite local (implementar en v2)
+// implementation("androidx.room:room-runtime:2.6.1")
+// implementation("androidx.room:room-ktx:2.6.1")
+// kapt("androidx.room:room-compiler:2.6.1")
+
+// DataStore - Preferencias modernas (implementar en v2)
+// implementation("androidx.datastore:datastore-preferences:1.0.0")
 ```
 
 ### **Supabase Client**
 ```kotlin
-// Supabase Kotlin - Cliente oficial
-implementation("io.github.jan-tennert.supabase:postgrest-kt:2.0.0")
+// Supabase Auth - Solo autenticación en MVP
 implementation("io.github.jan-tennert.supabase:auth-kt:2.0.0")
-implementation("io.github.jan-tennert.supabase:realtime-kt:2.0.0")
-implementation("io.github.jan-tennert.supabase:storage-kt:2.0.0")
 
-// Ktor - Motor de Supabase
+// Ktor - Requerido por Supabase
 implementation("io.ktor:ktor-client-android:2.3.7")
 implementation("io.ktor:ktor-client-core:2.3.7")
-implementation("io.ktor:ktor-utils:2.3.7")
+
+// Futuro: Postgrest, Realtime, Storage (no en MVP)
+// implementation("io.github.jan-tennert.supabase:postgrest-kt:2.0.0")
+// implementation("io.github.jan-tennert.supabase:realtime-kt:2.0.0")
+// implementation("io.github.jan-tennert.supabase:storage-kt:2.0.0")
 ```
 
 ### **Seguridad**

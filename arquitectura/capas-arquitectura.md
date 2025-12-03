@@ -20,8 +20,6 @@ Maneja todas las fuentes de datos (local y remota) y provee datos al dominio.
 - **datasource/**: Fuentes de datos (Room, Retrofit APIs)
 - **local/**: Base de datos local (Room), DAOs, entidades
 - **remote/**: APIs remotas, DTOs
-- **repository/**: Implementaciones de repositorios que coordinan local y remoto
-- **mapper/**: Conversión de DTOs a entidades de dominio
 
 ### **4. Core Layer**
 Contiene configuraciones, utilidades y componentes transversales que se usan en toda la aplicación.
@@ -48,18 +46,22 @@ Contiene configuraciones, utilidades y componentes transversales que se usan en 
 ---
 
 ### **Data Layer (data/)**
-**Propósito**: Gestionar todas las fuentes de datos y proveer implementaciones de repositorios.
+**Propósito**: Gestionar fuentes de datos remotas y proveer implementaciones de repositorios.
 
-**Responsabilidades**:
+**Responsabilidades (MVP)**:
 - ✅ Implementar interfaces de repositorio definidas en Domain
-- ✅ Coordinar entre fuentes de datos locales (Room) y remotas (APIs)
+- ✅ Obtener datos de Supabase Auth (`currentUserOrNull()?.userMetadata`)
+- ✅ Obtener datos de Spotify API vía Retrofit
 - ✅ Mapear DTOs de red a entidades de dominio
-- ✅ Gestionar caché local con Room para modo offline
-- ✅ Sincronizar datos entre Room y Supabase
-- ✅ Manejar errores de red y transformarlos en resultados comprensibles
+- ✅ Manejar errores de red y transformarlos en `NetworkResult`
 - ❌ **No debe** contener lógica de negocio compleja
 - ❌ **No debe** depender de la capa de presentación
 - ❌ **No debe** exponer detalles de implementación a capas superiores
+
+**Post-MVP (v2)**:
+- Agregar Room para caché local y modo offline
+- Sincronizar datos entre Room y Supabase
+- Implementar tabla `public.users` en Supabase
 
 ---
 
@@ -88,19 +90,11 @@ Contiene configuraciones, utilidades y componentes transversales que se usan en 
 - ✅ Invocar casos de uso del dominio
 - ✅ Observar cambios de estado y actualizar la UI reactivamente
 - ✅ Mostrar mensajes de error y estados de carga
+- ✅ Configurar paleta de colores (Light/Dark mode)
+- ✅ Definir tipografía y estilos visuales
 - ❌ **No debe** contener lógica de negocio
 - ❌ **No debe** acceder directamente a repositorios (usar use cases)
 - ❌ **No debe** hacer llamadas directas a APIs
-
----
-
-### **UI Layer (ui/)**
-**Propósito**: Definir tema visual y estilos de Material Design.
-
-**Responsabilidades**:
-- ✅ Configurar paleta de colores (Light/Dark mode)
-- ✅ Definir tipografía y tamaños de texto
-- ✅ Configurar formas y elevaciones de componentes
 - ❌ **No debe** contener lógica de negocio ni de presentación
 
 ---
