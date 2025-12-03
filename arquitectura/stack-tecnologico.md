@@ -1,6 +1,6 @@
-## 📚 Stack Tecnológico
+## Stack Tecnológico
 
-### **🎨 UI Layer**
+### **UI Layer**
 ```kotlin
 // Jetpack Compose - UI declarativa moderna
 implementation("androidx.compose.ui:ui:1.5.4")
@@ -11,7 +11,7 @@ implementation("androidx.navigation:navigation-compose:2.7.5")
 implementation("io.coil-kt:coil-compose:2.5.0")
 ```
 
-### **🏗️ Architecture Components**
+### **Architecture Components**
 ```kotlin
 // ViewModel y Lifecycle
 implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
@@ -22,7 +22,7 @@ implementation("com.google.dagger:hilt-android:2.48")
 kapt("com.google.dagger:hilt-compiler:2.48")
 ```
 
-### **💾 Persistencia Local (Room)**
+### **Persistencia Local (Room)**
 ```kotlin
 // Room - Base de datos SQLite local
 implementation("androidx.room:room-runtime:2.6.1")
@@ -33,7 +33,7 @@ kapt("androidx.room:room-compiler:2.6.1")
 implementation("androidx.datastore:datastore-preferences:1.0.0")
 ```
 
-### **🌐 Networking**
+### **Networking**
 ```kotlin
 // Retrofit - Cliente HTTP para APIs
 implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -45,7 +45,7 @@ implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 implementation("com.spotify.android:auth:1.2.5")
 ```
 
-### **☁️ Supabase Client**
+### **Supabase Client**
 ```kotlin
 // Supabase Kotlin - Cliente oficial
 implementation("io.github.jan-tennert.supabase:postgrest-kt:2.0.0")
@@ -59,19 +59,19 @@ implementation("io.ktor:ktor-client-core:2.3.7")
 implementation("io.ktor:ktor-utils:2.3.7")
 ```
 
-### **🔐 Seguridad**
+### **Seguridad**
 ```kotlin
 // Encrypted SharedPreferences - Almacenamiento seguro
 implementation("androidx.security:security-crypto:1.1.0-alpha06")
 ```
 
-### **⚙️ Background Tasks**
+### **Background Tasks**
 ```kotlin
 // WorkManager - Sincronización en background
 implementation("androidx.work:work-runtime-ktx:2.9.0")
 ```
 
-### **🧪 Testing**
+### **Testing**
 ```kotlin
 // Unit Testing
 testImplementation("junit:junit:4.13.2")
