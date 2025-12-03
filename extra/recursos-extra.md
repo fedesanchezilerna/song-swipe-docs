@@ -5,7 +5,9 @@
 - [Kotlin Koans](https://play.kotlinlang.org/koans/overview)
 
 ### **Clean Architecture Android**
-- [Philipp Lackner - Clean Architecture Guide](https://www.youtube.com/watch?v=gfHQsXXOptM)
+- [MVVM Clean Architecture in Android](https://medium.com/@anandgaur2207/mvvm-clean-architecture-in-android-be5ef3f05330)
+- [MVI Architecture Pattern in Android](https://medium.com/@mohammedkhudair57/mvi-architecture-pattern-in-android-0046bf9b8a2e)
+- [Philipp Lackner - Clean Architecture Note App](https://www.youtube.com/watch?v=8YPXv7xKh2w)
 - [Now in Android - Google's Sample App](https://github.com/android/nowinandroid)
 
 ### **Jetpack Compose**
