@@ -1,6 +1,5 @@
 # UseCaseModule
 
-## Propósito
 Provee instancias de casos de uso con sus dependencias inyectadas, encapsulando lógica de negocio específica.
 
 ## Responsabilidades
