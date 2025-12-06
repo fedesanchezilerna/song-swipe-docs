@@ -162,15 +162,38 @@ override suspend fun initiateSpotifyLogin() {
 **Manejar callback:**
 ```kotlin
 override suspend fun handleAuthCallback(url: String): AuthState {
-    supabase.auth.importAuthToken(
-        accessToken = params["access_token"],
-        refreshToken = params["refresh_token"],
-        retrieveUser = true,
-        autoRefresh = true
-    )
-    return AuthState.Success(userId)
+    // Extraer tokens desde URL fragment
+    val fragment = url.substringAfter("#")
+    val params = fragment.split("&").associate {
+        val (key, value) = it.split("=")
+        key to value
+    }
+
+    val accessToken = params["access_token"]
+    val refreshToken = params["refresh_token"]
+
+    if (accessToken != null && refreshToken != null) {
+        supabase.auth.importAuthToken(
+            accessToken = accessToken,
+            refreshToken = refreshToken,
+            retrieveUser = true,
+            autoRefresh = true
+        )
+
+        // Polling para esperar carga de sesión
+        var session = supabase.auth.currentSessionOrNull()
+        var attempts = 0
+        val maxAttempts = 20 // 2 segundos max
+
+        while (session == null && attempts < maxAttempts) {
+            delay(100)
+            session = supabase.auth.currentSessionOrNull()
+            attempts++
+        }
 }
 ```
+
+**Nota sobre el polling:** `importAuthToken()` retorna inmediatamente pero la recuperación del usuario ocurre de forma asíncrona. El polling espera hasta 2 segundos para que la sesión se complete antes de retornar el estado.
 
 **Obtener provider token (para Spotify API):**
 ```kotlin
@@ -209,7 +232,7 @@ val spotifyToken = authRepository.getSpotifyAccessToken()
 
 ### TODO: Inyección en Requests (SpotifyAuthInterceptor)
 
-Cuando implementemos llamadas a la API de Spotify, el token se inyectará automáticamente:
+El token se inyecta automáticamente en todas las peticiones a Spotify API:
 
 ```kotlin
 class SpotifyAuthInterceptor(
@@ -237,7 +260,7 @@ val spotifyApi = Retrofit.Builder()
     .build()
 ```
 
-Todas las peticiones a Spotify tendrán el token automáticamente.
+Todas las peticiones a Spotify incluyen el token automáticamente.
 
 ---
 
@@ -260,14 +283,27 @@ init {
 
 private fun checkExistingSession() {
     viewModelScope.launch {
-        if (loginUseCase.hasActiveSession()) {
-            val user = loginUseCase.getCurrentUser()
-            _authState.value = AuthState.Success(user.id)
-        } else {
+        try {
+            // Esperar inicialización de Supabase
+            loginUseCase.awaitInitialization()
+
+            if (loginUseCase.hasActiveSession()) {
+                val user = loginUseCase.getCurrentUser()
+                if (user != null) {
+                    _authState.value = AuthState.Success(user.id)
+                } else {
+                    _authState.value = AuthState.Idle
+                }
+            } else {
+                _authState.value = AuthState.Idle
+            }
+        } catch (e: Exception) {
             _authState.value = AuthState.Idle
         }
     }
 }
+
+**Nota:** El delay de inicialización (200ms) asegura que Supabase haya cargado completamente la sesión desde el almacenamiento local antes de verificar si existe.
 ```
 
 Si existe sesión válida, el usuario no necesita volver a autenticarse.
@@ -334,11 +370,6 @@ Representa el estado actual de la autenticación en la UI.
 
 ## TODO: Sign Out
 
-```kotlin
-override suspend fun signOut() {
-    supabase.auth.signOut()
-}
-```
 
 Limpia la sesión local y tokens almacenados. El usuario deberá volver a autenticarse.
 

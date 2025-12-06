@@ -3,11 +3,19 @@
 Centraliza la configuración de Supabase, inicializa el cliente y gestiona autenticación OAuth con Spotify.
 
 ## Responsabilidades
-- Almacenar URL del proyecto y anon key de Supabase
-- Inicializar cliente de Supabase Auth
-- Configurar deep link para OAuth callback (`songswipe://callback`)
-- Configurar auto-refresh de tokens
+- Almacenar credenciales del proyecto Supabase (URL y anon key)
+- Inicializar cliente de Supabase con lazy initialization
+- Configurar plugin de Auth para OAuth con Spotify
+- Configurar plugin de Postgrest para operaciones de base de datos (futura implementación)
+- Definir esquema de deep link para callbacks de OAuth
 - Proveer instancia singleton del cliente
+
+## Información del Proyecto
+
+- **Project Name**: song-swipe
+- **Project ID**: keogusadivocspsdysez
+- **URL**: https://keogusadivocspsdysez.supabase.co
+- **Deep Link**: songswipe://callback
 
 ## Implementación
 
@@ -27,8 +35,7 @@ object SupabaseConfig {
                 host = "callback"
             }
             
-            // MVP: No se usa Postgrest (no hay tabla users custom)
-            // install(Postgrest)
+            install(Postgrest)
         }
     }
 }
@@ -36,7 +43,9 @@ object SupabaseConfig {
 
 ## Plugins Instalados
 
-### Auth (Implementado)
+### Auth
+Plugin de autenticación que gestiona OAuth y sesiones.
+
 ```kotlin
 install(Auth) {
     scheme = "songswipe"     // Deep link scheme
@@ -44,32 +53,85 @@ install(Auth) {
 }
 ```
 
-Permite:
-- OAuth con Spotify
-- Gestión de sesiones
+**Características**:
+- OAuth con Spotify como proveedor
+- Gestión automática de sesiones
 - Auto-refresh de tokens
-- Provider token para Spotify API
+- Almacenamiento seguro de credenciales
+- Recuperación de provider tokens
 
-### Postgrest (No en MVP)
+### Postgrest
+Plugin para operaciones de base de datos. (futura implementación)
+
 ```kotlin
-// Post-MVP: Para interactuar con tablas custom
-// install(Postgrest)
+install(Postgrest)
 ```
 
-Se considera agregar cuando se cree la tabla `public.users` personalizada.
+**Uso futuro**:
+- Queries a tablas custom de Supabase
+- CRUD de playlists, swipes, etc.
+- Row Level Security (RLS)
 
-## Consideraciones
+## Uso del Cliente
 
-### Seguridad
-- ✅ `SUPABASE_ANON_KEY` es segura para cliente
-- ⚠️ En prod, cargar desde `local.properties` o variables de entorno
-- ❌ **NUNCA** commitear claves en Git
+### Acceso desde Repositorios
+```kotlin
+class SupabaseAuthRepository : AuthRepository {
+    private val supabase = SupabaseConfig.client
+    
+    override suspend fun initiateSpotifyLogin() {
+        supabase.auth.signInWith(Spotify)
+    }
+}
+```
 
-### Deep Link
-- Debe coincidir con `AndroidManifest.xml`:
-  ```xml
-  <data android:scheme="songswipe" android:host="callback" />
-  ```
+### Operaciones Comunes
+```kotlin
+// Obtener sesión actual
+val session = supabase.auth.currentSessionOrNull()
+
+// Obtener usuario
+val user = supabase.auth.currentUserOrNull()
+
+// Obtener provider token (Spotify access token)
+val spotifyToken = session?.providerToken
+
+// Sign out
+supabase.auth.signOut()
+```
+
+## Deep Link Configuration
+
+El deep link debe estar configurado en `AndroidManifest.xml`:
+
+```xml
+<intent-filter>
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+    
+    <data
+        android:scheme="songswipe"
+        android:host="callback" />
+</intent-filter>
+```
+
+Este deep link debe estar en la whitelist de Supabase Dashboard:
+- Dashboard → Authentication → URL Configuration
+- Añadir: `songswipe://callback`
+
+## Consideraciones de Seguridad
+
+- `SUPABASE_ANON_KEY` es pública y segura para uso client-side
+- Protegida por Row Level Security (RLS) en Supabase
+- En un futuro, considerar cargar desde `local.properties` o variables de entorno
+
+## Inicialización Lazy
+
+El cliente se inicializa mediante `lazy` delegation:
+- Solo se crea cuando se accede por primera vez
+- Garantiza instancia singleton
+- Thread-safe por defecto en Kotlin
 - Debe estar en whitelist de Supabase Dashboard
 
 ### Session Management

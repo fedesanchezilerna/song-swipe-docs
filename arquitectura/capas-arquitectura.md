@@ -35,13 +35,14 @@ Contiene configuraciones, utilidades y componentes transversales que se usan en 
 **Propósito**: Proveer infraestructura transversal y configuraciones globales.
 
 **Responsabilidades**:
-- ✅ Configurar credenciales de APIs externas (Spotify, Supabase)
-- ✅ Definir constantes y valores compartidos en toda la app
-- ✅ Implementar interceptores HTTP para autenticación y errores
-- ✅ Proveer tipos genéricos para manejo de respuestas de red
-- ✅ Ofrecer funciones de extensión y utilidades reutilizables
-- ❌ **No debe** contener lógica de negocio
-- ❌ **No debe** depender de las capas de dominio o presentación
+- Configurar credenciales y clientes de APIs externas (Spotify, Supabase)
+- Definir constantes y valores compartidos en toda la app
+- Configurar clientes de Supabase con plugins necesarios (Auth, Postgrest)
+- Definir esquemas de deep links y configuración de callbacks
+- Proveer configuración de logging y debugging
+- Ofrecer funciones de extensión y utilidades reutilizables (futuro)
+- **No debe** contener lógica de negocio
+- **No debe** depender de las capas de dominio o presentación
 
 ---
 
@@ -49,19 +50,16 @@ Contiene configuraciones, utilidades y componentes transversales que se usan en 
 **Propósito**: Gestionar fuentes de datos remotas y proveer implementaciones de repositorios.
 
 **Responsabilidades (MVP)**:
-- ✅ Implementar interfaces de repositorio definidas en Domain
-- ✅ Obtener datos de Supabase Auth (`currentUserOrNull()?.userMetadata`)
-- ✅ Obtener datos de Spotify API vía Retrofit
-- ✅ Mapear DTOs de red a entidades de dominio
-- ✅ Manejar errores de red y transformarlos en `NetworkResult`
-- ❌ **No debe** contener lógica de negocio compleja
-- ❌ **No debe** depender de la capa de presentación
-- ❌ **No debe** exponer detalles de implementación a capas superiores
+- Implementar interfaces de repositorio definidas en Domain
+- Obtener datos de Supabase Auth (`currentUserOrNull()?.userMetadata`)
+- Manejar callbacks de OAuth y establecer sesiones
+- Obtener provider tokens para llamadas a APIs externas
+- Mapear datos de Supabase a entidades de dominio
+- Gestionar sesiones y verificar estados de autenticación
+- **No debe** contener lógica de negocio compleja
+- **No debe** depender de la capa de presentación
+- **No debe** exponer detalles de implementación a capas superiores
 
-**Post-MVP (v2)**:
-- Agregar Room para caché local y modo offline
-- Sincronizar datos entre Room y Supabase
-- Implementar tabla `public.users` en Supabase
 
 ---
 
@@ -69,14 +67,15 @@ Contiene configuraciones, utilidades y componentes transversales que se usan en 
 **Propósito**: Contener la lógica de negocio pura, independiente de frameworks.
 
 **Responsabilidades**:
-- ✅ Definir entidades de negocio (User, Song, Playlist, Swipe)
-- ✅ Definir interfaces de repositorio (contratos sin implementación)
-- ✅ Implementar casos de uso con lógica de negocio específica
-- ✅ Validar reglas de negocio (ej: usuario debe tener email válido)
-- ✅ Orquestar operaciones entre múltiples repositorios
-- ❌ **No debe** depender de Android (Context, Activity, etc.)
-- ❌ **No debe** depender de librerías externas (Retrofit, Room, etc.)
-- ❌ **No debe** conocer detalles de implementación (APIs, BD)
+- Definir entidades de negocio (User, Song, Playlist, Swipe)
+- Definir interfaces de repositorio (contratos sin implementación)
+- Implementar casos de uso con lógica de negocio específica
+- Definir estados de UI como sealed classes (AuthState, etc.)
+- Validar reglas de negocio (ej: usuario debe tener email válido)
+- Orquestar operaciones entre múltiples repositorios
+- **No debe** depender de Android (Context, Activity, etc.)
+- **No debe** depender de librerías externas (Retrofit, Room, Supabase, etc.)
+- **No debe** conocer detalles de implementación (APIs, BD)
 
 ---
 
@@ -84,18 +83,19 @@ Contiene configuraciones, utilidades y componentes transversales que se usan en 
 **Propósito**: Manejar la interfaz de usuario y el estado de la UI.
 
 **Responsabilidades**:
-- ✅ Renderizar componentes visuales con Jetpack Compose
-- ✅ Manejar eventos de usuario (clicks, swipes, inputs)
-- ✅ Gestionar estado de UI en ViewModels
-- ✅ Invocar casos de uso del dominio
-- ✅ Observar cambios de estado y actualizar la UI reactivamente
-- ✅ Mostrar mensajes de error y estados de carga
-- ✅ Configurar paleta de colores (Light/Dark mode)
-- ✅ Definir tipografía y estilos visuales
-- ❌ **No debe** contener lógica de negocio
-- ❌ **No debe** acceder directamente a repositorios (usar use cases)
-- ❌ **No debe** hacer llamadas directas a APIs
-- ❌ **No debe** contener lógica de negocio ni de presentación
+- Renderizar componentes visuales con Jetpack Compose
+- Manejar eventos de usuario (clicks, swipes, inputs)
+- Gestionar estado de UI en ViewModels con StateFlow
+- Invocar casos de uso del dominio
+- Observar cambios de estado y actualizar la UI reactivamente
+- Mostrar mensajes de error y estados de carga
+- Verificar sesiones existentes al inicializar
+- Configurar paleta de colores (Light/Dark mode)
+- Definir tipografía y estilos visuales
+- **No debe** contener lógica de negocio
+- **No debe** acceder directamente a repositorios (usar use cases)
+- **No debe** hacer llamadas directas a APIs
+- **No debe** conocer detalles de implementación de datos
 
 ---
 
@@ -103,9 +103,11 @@ Contiene configuraciones, utilidades y componentes transversales que se usan en 
 **Propósito**: Configurar inyección de dependencias con Hilt.
 
 **Responsabilidades**:
-- ✅ Proveer instancias singleton de APIs y clientes (Retrofit, Supabase)
-- ✅ Proveer instancias de Room Database y DAOs
-- ✅ Proveer implementaciones de repositorios
-- ✅ Proveer casos de uso con sus dependencias inyectadas
-- ✅ Configurar interceptores de red
-- ❌ **No debe** contener lógica de negocio
+- Proveer instancias singleton de clientes externos (Supabase, Retrofit)
+- Proveer implementaciones de repositorios
+- Proveer casos de uso con sus dependencias inyectadas
+- Configurar interceptores de red
+- Proveer instancias de Room Database y DAOs (futuro)
+- **No debe** contener lógica de negocio
+
+**Estado actual**: Pendiente de implementación. Las dependencias se instancian manualmente en `MainActivity`.

@@ -13,6 +13,8 @@ Se implementará toda la lógica en el frontend Android, sin backend propio.
 
 ## Estructura de Carpetas
 
+Esta es la estructura objetivo una vez se implementen todas las features:
+
 ```
 song-swipe-frontend/
   app/src/main/java/org/ilerna/song_swipe_frontend/
@@ -69,6 +71,7 @@ song-swipe-frontend/
     │   ├── model/                                      # Entidades, Value Objects, estados, enums
     │   │   └── DomainConstants.kt                      # Constantes de lógica de negocio y validación
     │   ├── repository/                                 # Interfaces de repositorio (contratos)
+    │   │   └── AuthRepository.kt                       # Contrato de autenticación
     │   └── usecase/                                    # Casos de uso con lógica de negocio
     │       ├── auth/                                   # Casos de uso de autenticación
     │       │   ├── LoginUseCase.kt                     # Validar y autenticar usuario
@@ -80,20 +83,32 @@ song-swipe-frontend/
     │       └── user/                                   # Casos de uso de perfil de usuario
     │
     ├── presentation/                                   # Interfaz de usuario y estado de UI
+    │   ├── components/                                 # Componentes reutilizables de Jetpack Compose
+    │   │   ├── LoadingIndicator.kt                     # Indicador de carga
+    │   │   ├── PrimaryButton.kt                        # Botón primario
+    │   │   └── SecundaryButton.kt                      # Botón secundario
+    │   ├── screen/                                     # Pantallas completas de la app (organizadas por feature)
+    │   │   ├── login/                                  # Feature: Autenticación
+    │   │   │   ├── LoginScreen.kt                      # Pantalla de login
+    │   │   │   ├── LoginErrorScreen.kt                 # Pantalla de error
+    │   │   │   └── LoginViewModel.kt                   # ViewModel del login
+    │   │   ├── swipe/                                  # Feature: Swipe de canciones
+    │   │   │   ├── SwipeScreen.kt                      # Pantalla de swipe
+    │   │   │   ├── SwipeViewModel.kt                   # ViewModel del swipe
+    │   │   │   └── SwipeState.kt                       # Estado del swipe
+    │   │   ├── playlist/                               # Feature: Gestión de playlists
+    │   │   │   ├── PlaylistScreen.kt                   # Pantalla de playlists
+    │   │   │   └── PlaylistViewModel.kt                # ViewModel de playlists
+    │   │   ├── profile/                                # Feature: Perfil de usuario
+    │   │   │   ├── ProfileScreen.kt                    # Pantalla de perfil
+    │   │   │   └── ProfileViewModel.kt                 # ViewModel del perfil
+    │   │   └── main/                                   # Feature: Navegación principal
+    │   │       └── MainScreen.kt                       # Scaffold principal con bottom nav
     │   ├── theme/                                      # Temas de Material Design
     │   │   ├── Color.kt                                # Paleta de colores de la app
     │   │   ├── Theme.kt                                # Configuración de tema Material 3
     │   │   ├── Type.kt                                 # Tipografía de la app
-    │   │   └── Dimensions.kt                           # Formas y bordes
-    │   ├── components/                                 # Componentes reutilizables de Jetpack Compose
-    │   ├── screens/                                    # Pantallas completas de la app
-    │   │   ├── auth/                                   # Pantallas de autenticación (login, registro)
-    │   │   ├── swipe/                                  # Pantalla de swipe de canciones
-    │   │   ├── playlist/                               # Pantallas de gestión de playlists
-    │   │   ├── profile/                                # Pantalla de perfil de usuario
-    │   │   └── main/                                   # Pantalla principal y navegación
-    │   │       └── MainScreen.kt                       # Scaffold principal con bottom nav
-    │   ├── viewmodels/                                 # ViewModels que gestionan estado de UI
+    │   │   └── Dimensions.kt                           # Dimensiones y espaciados
     │   └── utils/                                      # Utilidades específicas de UI
     │       └── UIConstants.kt                          # Constantes de UI (animaciones, límites, dimensiones)
     │
@@ -106,3 +121,78 @@ song-swipe-frontend/
     │
     └── MainActivity.kt                                 # Activity principal (punto de entrada)
 ```
+
+---
+
+## 📊 Análisis de Implementación Actual
+
+### ✅ **Aspectos Positivos**
+
+1. **Nomenclatura correcta**: Se usa `presentation/` en lugar de `ui/` (estándar Android)
+2. **Organización por feature**: `LoginViewModel.kt` está junto a `LoginScreen.kt` (cohesión)
+3. **Separación de capas**: Core, Data, Domain, Presentation están bien diferenciadas
+4. **Uso de StateFlow**: ViewModel implementa flujo reactivo con StateFlow
+5. **Sealed classes**: `AuthState` maneja estados de forma type-safe
+6. **Clean Architecture**: Dependencias apuntan hacia adentro (Data → Domain ← Presentation)
+
+### **Mejoras Requeridas (Próximas Tareas)**
+
+#### 1. **Implementar Dependency Injection (CRÍTICO)**
+```
+📦 Agregar a build.gradle.kts:
+- Hilt Android
+- Hilt Navigation Compose
+
+📁 Crear módulo di/:
+- AppModule.kt
+- RepositoryModule.kt
+- UseCaseModule.kt
+```
+
+**Sin DI:**
+- ❌ Acoplamiento fuerte entre capas
+- ❌ Testing difícil (no puedes mockear dependencias)
+- ❌ Instanciación manual de objetos
+- ❌ No escalable
+
+#### 2. **Agregar Navigation Compose**
+```kotlin
+// Necesitas implementar:
+presentation/navigation/
+├── Screen.kt           // Sealed class con rutas
+├── AppNavigation.kt    // NavHost configuration
+└── NavigationExtensions.kt
+```
+
+#### 3. **Implementar manejo de eventos (UDF completo)**
+```kotlin
+// Patrón recomendado por cada screen:
+presentation/screen/login/
+├── LoginScreen.kt
+├── LoginViewModel.kt
+├── LoginState.kt       // data class con estado de UI
+└── LoginEvent.kt       // sealed interface con eventos
+```
+
+
+### 📝 **Notas de Arquitectura**
+
+#### **Flujo de Dependencias**
+```
+┌─────────────────┐
+│  Presentation   │  (ViewModels, Screens)
+└────────┬────────┘
+         │ depende de ↓
+┌────────▼────────┐
+│     Domain      │  (UseCases, Models, Repository Interfaces)
+└────────┬────────┘
+         │ implementado por ↓
+┌────────▼────────┐
+│      Data       │  (Repository Implementations, DataSources)
+└─────────────────┘
+```
+
+#### **Regla de Oro**
+> **Domain NO debe depender de Data ni Presentation**
+> 
+> Las interfaces de repositorio siempre van en `domain/` porque definen **QUÉ** hace el sistema, no **CÓMO** lo hace.
