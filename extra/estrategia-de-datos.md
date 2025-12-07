@@ -40,14 +40,3 @@ Spotify API:
 4. No hay caché local → Siempre datos frescos
 5. Sin conexión → App no funciona
 ```
-
-## **Ventajas MVP:**
-- ✅ Desarrollo más rápido
-- ✅ Menos complejidad
-- ✅ Datos siempre actualizados
-- ✅ Sin problemas de sincronización
-
-## **Limitaciones MVP:**
-- ❌ Requiere conexión constante
-- ❌ Sin caché (más lento en redes lentas)
-- ❌ Sin datos cuando offline
